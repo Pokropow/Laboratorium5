@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,9 +26,7 @@ public class Window implements ActionListener {
 	JButton lastButton=null;
 	String currText;
 
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -41,9 +40,7 @@ public class Window implements ActionListener {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
+
 	public Window() {
 		timer = new Timer(1000,this);
 		timer.setRepeats(false);
@@ -51,9 +48,7 @@ public class Window implements ActionListener {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
+
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 358, 288);
@@ -175,14 +170,103 @@ public class Window implements ActionListener {
 		panel.add(button_1);
 		
 		JButton button_2 = new JButton("=");
+		button_2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String s = parse(currText);
+				currText +=" = " +s;
+				textField.setText(currText);
+			}
+			
+		});
 		button_2.setBounds(258, 182, 67, 23);
 		panel.add(button_2);
 		
 		JButton btnC = new JButton("C");
+		btnC.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(currText.length()>0)
+				{
+					currText = currText.substring(0, currText.length()-1);
+					textField.setText(currText);
+				}				
+			}
+		});
 		btnC.setBounds(258, 215, 67, 23);
 		panel.add(btnC);
 	}
 
+	private String parse(final String input)
+	{
+		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<Character>signs = new ArrayList<Character>();
+		
+		int beginIndex = 0;
+		for(int i=0;i<=input.length();i++)
+		{
+			if(i==input.length())
+			{
+				words.add(input.substring(beginIndex, i));
+			}
+			else
+			{
+				char c = input.charAt(i);
+				if(c=='+'||c=='-'||c=='/')
+				{
+					signs.add(new Character(c));
+					words.add(input.substring(beginIndex, i));
+					beginIndex=i+1;
+				}
+			}			
+		}
+		String s = words.get(0);
+		
+		System.out.print(signs.get(0)+"\n");
+		
+		for(int i=0;i<signs.size();i++)
+		{
+			char sign = signs.get(i);
+			switch(sign)
+			{
+			case '+':
+				s = s+words.get(i+1);
+				break;
+			case '-':
+				s=s.replaceAll(words.get(i+1), "");
+				break;
+			case '/':
+				s = longestCommonPart(s, words.get(i+1));
+				break;				
+			}
+		}		
+		return s;
+	}
+	
+	String longestCommonPart(final String a, final String b)
+	{
+		String longest = "";
+		int longest_size = 0;
+		
+		for(int i=0;i<a.length();i++)
+		{
+			for(int j=0;j<b.length();j++)
+			{
+				int n=0;
+				while(i+n<a.length()&&j+n<b.length()&&a.charAt(i+n)==b.charAt(j+n))
+				{
+					n++;
+				}
+				if(n>longest_size)
+				{
+					longest_size = n;
+					longest = a.substring(i, i+n);
+				}
+			}
+		}
+		return longest;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub		
