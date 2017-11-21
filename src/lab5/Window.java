@@ -81,9 +81,10 @@ public class Window implements ActionListener {
 			public void actionPerformed(ActionEvent arg0) {
 				if(arg0.getSource()==lastButton&&timer.isRunning())
 				{
-					clicks+=1;					
+					clicks+=1;
 					String text = ((JButton)(arg0.getSource())).getText();
 					character = new Character(text.charAt(clicks%text.length()));
+					timer.restart();
 				}
 				else if(!timer.isRunning())
 				{
@@ -99,12 +100,24 @@ public class Window implements ActionListener {
 					clicks=0;
 					String text = ((JButton)(arg0.getSource())).getText();
 					character = new Character(text.charAt(clicks%text.length()));
-					timer.start();
+					timer.restart();
 					lastButton = (JButton)arg0.getSource();
 				}
+				textField.setText(currText+character);
 			}
 		};
 		
+		ActionListener signListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				timer.stop();
+				if(character!=null)
+				{
+					currText+=character;
+				}
+				currText+=((JButton)e.getSource()).getText();
+				textField.setText(currText);
+			}
+		};		
 		
 		JButton btnNewButton = new JButton("abc");
 		btnNewButton.addActionListener(listener);
@@ -147,14 +160,17 @@ public class Window implements ActionListener {
 		panel.add(btnWxyz);
 		
 		JButton btnNewButton_1 = new JButton("+");
+		btnNewButton_1.addActionListener(signListener);
 		btnNewButton_1.setBounds(28, 182, 67, 23);
 		panel.add(btnNewButton_1);
 		
 		JButton button = new JButton("-");
+		button.addActionListener(signListener);
 		button.setBounds(104, 182, 67, 23);
 		panel.add(button);
 		
 		JButton button_1 = new JButton("/");
+		button_1.addActionListener(signListener);
 		button_1.setBounds(181, 182, 67, 23);
 		panel.add(button_1);
 		
@@ -171,6 +187,8 @@ public class Window implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub		
 		currText+=character;
+		character = null;
+		textField.setText(currText);
 		System.out.println(currText);
 	}
 }
