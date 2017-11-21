@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -25,6 +26,8 @@ public class Window implements ActionListener {
 	Integer clicks=0;
 	JButton lastButton=null;
 	String currText;
+	
+	DefaultListModel<String> model;
 
 
 	public static void main(String[] args) {
@@ -63,6 +66,9 @@ public class Window implements ActionListener {
 		panel.add(scrollPane);
 		
 		JList<String> list = new JList<String>();
+		
+		model = new DefaultListModel<String>();
+		list.setModel(model);		
 		scrollPane.setViewportView(list);
 		
 		textField = new JTextField();
@@ -109,6 +115,7 @@ public class Window implements ActionListener {
 				{
 					currText+=character;
 				}
+				character =null;
 				currText+=((JButton)e.getSource()).getText();
 				textField.setText(currText);
 			}
@@ -173,10 +180,21 @@ public class Window implements ActionListener {
 		button_2.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) {				
+				timer.stop();
+				if(character!=null)
+				{
+					currText+=character;
+				}
+				character = null;
 				String s = parse(currText);
 				currText +=" = " +s;
-				textField.setText(currText);
+				
+				//model.addElement(currText);
+				model.add(0, currText);
+				
+				currText="";
+				textField.setText(currText);				
 			}
 			
 		});
@@ -185,7 +203,13 @@ public class Window implements ActionListener {
 		
 		JButton btnC = new JButton("C");
 		btnC.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
+				timer.stop();
+				if(character!=null)
+				{
+					currText+=character;
+				}
+				character = null;
 				if(currText.length()>0)
 				{
 					currText = currText.substring(0, currText.length()-1);
@@ -222,8 +246,6 @@ public class Window implements ActionListener {
 		}
 		String s = words.get(0);
 		
-		System.out.print(signs.get(0)+"\n");
-		
 		for(int i=0;i<signs.size();i++)
 		{
 			char sign = signs.get(i);
@@ -243,7 +265,7 @@ public class Window implements ActionListener {
 		return s;
 	}
 	
-	String longestCommonPart(final String a, final String b)
+	private String longestCommonPart(final String a, final String b)
 	{
 		String longest = "";
 		int longest_size = 0;
