@@ -26,6 +26,7 @@ public class Window implements ActionListener {
 	Integer clicks=0;
 	JButton lastButton=null;
 	String currText;
+	boolean czyMale=true;
 	
 	DefaultListModel<String> model;
 
@@ -84,14 +85,14 @@ public class Window implements ActionListener {
 				{
 					clicks+=1;
 					String text = ((JButton)(arg0.getSource())).getText();
-					character = new Character(text.charAt(clicks%text.length()));
+					character = new Character((char) (text.charAt(clicks%text.length())+(czyMale?0:'A'-'a')));
 					timer.restart();
 				}
 				else if(!timer.isRunning())
 				{
 					clicks=0;		
 					String text = ((JButton)(arg0.getSource())).getText();
-					character = new Character(text.charAt(clicks%text.length()));
+					character = new Character((char) (text.charAt(clicks%text.length())+(czyMale?0:'A'-'a')));
 					timer.start();
 					lastButton = (JButton)arg0.getSource();
 				}
@@ -100,7 +101,7 @@ public class Window implements ActionListener {
 					currText+=character;
 					clicks=0;
 					String text = ((JButton)(arg0.getSource())).getText();
-					character = new Character(text.charAt(clicks%text.length()));
+					character = new Character((char) (text.charAt(clicks%text.length())+(czyMale?0:'A'-'a')));
 					timer.restart();
 					lastButton = (JButton)arg0.getSource();
 				}
@@ -219,6 +220,21 @@ public class Window implements ActionListener {
 		});
 		btnC.setBounds(258, 215, 67, 23);
 		panel.add(btnC);
+		
+		JButton MD = new JButton("M/D");
+		MD.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				timer.stop();
+				if(character!=null)
+				{
+					currText+=character;
+				}
+				character = null;
+				czyMale=!czyMale;						
+			}
+		});
+		MD.setBounds(181, 216, 67, 23);
+		panel.add(MD);
 	}
 
 	private String parse(final String input)
